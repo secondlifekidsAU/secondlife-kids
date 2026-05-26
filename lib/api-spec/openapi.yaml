@@ -1,0 +1,879 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Second Life Kids API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: bookings
+    description: Booking operations
+  - name: checkout
+    description: Stripe checkout operations
+  - name: admin
+    description: Admin operations
+  - name: config
+    description: Configuration
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /bookings:
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Create a new booking (draft)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingBody"
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /bookings/{id}:
+    get:
+      operationId: getBooking
+      tags: [bookings]
+      summary: Get booking by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /bookings/by-session/{sessionId}:
+    get:
+      operationId: getBookingBySession
+      tags: [bookings]
+      summary: Get booking by Stripe session ID
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /bookings/{id}/cancel-request:
+    post:
+      operationId: requestCancellation
+      tags: [bookings]
+      summary: Customer requests cancellation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CancellationRequestBody"
+      responses:
+        "200":
+          description: Cancellation request submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CancellationRequest"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Booking not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkout/create-session:
+    post:
+      operationId: createCheckoutSession
+      tags: [checkout]
+      summary: Create Stripe checkout session for a booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCheckoutSessionBody"
+      responses:
+        "200":
+          description: Stripe checkout URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutSession"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /checkout/webhook:
+    post:
+      operationId: stripeWebhook
+      tags: [checkout]
+      summary: Stripe webhook handler
+      responses:
+        "200":
+          description: Webhook received
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+                required:
+                  - received
+
+  /checkout/quote-request:
+    post:
+      operationId: submitQuoteRequest
+      tags: [checkout]
+      summary: Submit XL quote request (no payment)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuoteRequestBody"
+      responses:
+        "201":
+          description: Quote request submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuoteRequest"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/bookings:
+    get:
+      operationId: adminGetBookings
+      tags: [admin]
+      summary: Get all bookings (admin)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, PENDING_PAYMENT, PAID, CANCEL_REQUESTED, CANCELLED, COLLECTED, REFUNDED]
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Bookings list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/bookings/{id}:
+    get:
+      operationId: adminGetBooking
+      tags: [admin]
+      summary: Get booking detail (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Booking detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BookingDetail"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/bookings/{id}/status:
+    patch:
+      operationId: adminUpdateBookingStatus
+      tags: [admin]
+      summary: Update booking status (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBookingStatusBody"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/bookings/export:
+    get:
+      operationId: adminExportBookings
+      tags: [admin]
+      summary: Export bookings as CSV (admin)
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/stats:
+    get:
+      operationId: adminGetStats
+      tags: [admin]
+      summary: Get dashboard stats (admin)
+      responses:
+        "200":
+          description: Stats summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginBody"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLoginResponse"
+        "401":
+          description: Wrong password
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                required:
+                  - success
+
+  /config/tiers:
+    get:
+      operationId: getTiers
+      tags: [config]
+      summary: Get pricing tiers
+      responses:
+        "200":
+          description: Pricing tiers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PricingTier"
+
+  /config/available-dates:
+    get:
+      operationId: getAvailableDates
+      tags: [config]
+      summary: Get available pickup dates
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        "200":
+          description: Available dates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvailableDates"
+
+  /config/impact:
+    get:
+      operationId: getImpactStats
+      tags: [config]
+      summary: Get estimated impact statistics
+      responses:
+        "200":
+          description: Impact stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImpactStats"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: string
+      required:
+        - error
+
+    BookingStatus:
+      type: string
+      enum: [DRAFT, PENDING_PAYMENT, PAID, CANCEL_REQUESTED, CANCELLED, COLLECTED, REFUNDED]
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+        tierId:
+          type: string
+        tierName:
+          type: string
+        priceCents:
+          type: integer
+        pickupDate:
+          type: string
+          format: date
+        customerName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+          nullable: true
+        suburb:
+          type: string
+        state:
+          type: string
+        postcode:
+          type: string
+        safePlaceInstructions:
+          type: string
+          nullable: true
+        itemNotes:
+          type: string
+          nullable: true
+        stripeSessionId:
+          type: string
+          nullable: true
+        stripePaymentIntentId:
+          type: string
+          nullable: true
+        stripePaymentStatus:
+          type: string
+          nullable: true
+        estimatedKg:
+          type: number
+          nullable: true
+        estimatedBags:
+          type: integer
+          nullable: true
+      required:
+        - id
+        - createdAt
+        - updatedAt
+        - status
+        - tierId
+        - tierName
+        - priceCents
+        - pickupDate
+        - customerName
+        - email
+        - phone
+        - addressLine1
+        - suburb
+        - state
+        - postcode
+
+    BookingDetail:
+      allOf:
+        - $ref: "#/components/schemas/Booking"
+        - type: object
+          properties:
+            adminNotes:
+              type: string
+              nullable: true
+            cancellationRequests:
+              type: array
+              items:
+                $ref: "#/components/schemas/CancellationRequest"
+            auditLog:
+              type: array
+              items:
+                $ref: "#/components/schemas/AuditLogEntry"
+
+    CreateBookingBody:
+      type: object
+      properties:
+        tierId:
+          type: string
+        tierName:
+          type: string
+        priceCents:
+          type: integer
+        pickupDate:
+          type: string
+          format: date
+        customerName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        addressLine1:
+          type: string
+        addressLine2:
+          type: string
+          nullable: true
+        suburb:
+          type: string
+        state:
+          type: string
+          default: VIC
+        postcode:
+          type: string
+        safePlaceInstructions:
+          type: string
+          nullable: true
+        itemNotes:
+          type: string
+          nullable: true
+        termsAccepted:
+          type: boolean
+        estimatedKg:
+          type: number
+          nullable: true
+        estimatedBags:
+          type: integer
+          nullable: true
+      required:
+        - tierId
+        - tierName
+        - priceCents
+        - pickupDate
+        - customerName
+        - email
+        - phone
+        - addressLine1
+        - suburb
+        - state
+        - postcode
+        - termsAccepted
+
+    CancellationRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        bookingId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        reason:
+          type: string
+          nullable: true
+        eligibleForFullRefund:
+          type: boolean
+        status:
+          type: string
+          enum: [PENDING, APPROVED, REJECTED]
+      required:
+        - id
+        - bookingId
+        - createdAt
+        - eligibleForFullRefund
+        - status
+
+    CancellationRequestBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        reason:
+          type: string
+          nullable: true
+      required:
+        - email
+
+    CreateCheckoutSessionBody:
+      type: object
+      properties:
+        bookingId:
+          type: string
+      required:
+        - bookingId
+
+    CheckoutSession:
+      type: object
+      properties:
+        url:
+          type: string
+        sessionId:
+          type: string
+      required:
+        - url
+        - sessionId
+
+    QuoteRequestBody:
+      type: object
+      properties:
+        customerName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        suburb:
+          type: string
+        postcode:
+          type: string
+        description:
+          type: string
+        preferredDate:
+          type: string
+          nullable: true
+      required:
+        - customerName
+        - email
+        - phone
+        - suburb
+        - postcode
+        - description
+
+    QuoteRequest:
+      type: object
+      properties:
+        id:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        customerName:
+          type: string
+        email:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, CONTACTED, CLOSED]
+      required:
+        - id
+        - createdAt
+        - customerName
+        - email
+        - status
+
+    UpdateBookingStatusBody:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/BookingStatus"
+        adminNotes:
+          type: string
+          nullable: true
+      required:
+        - status
+
+    AdminStats:
+      type: object
+      properties:
+        totalBookings:
+          type: integer
+        paidBookings:
+          type: integer
+        collectedBookings:
+          type: integer
+        totalRevenueCents:
+          type: integer
+        cancelRequests:
+          type: integer
+        bookingsByStatus:
+          type: object
+          additionalProperties:
+            type: integer
+        estimatedBagsDiverted:
+          type: integer
+        estimatedKgDiverted:
+          type: number
+      required:
+        - totalBookings
+        - paidBookings
+        - collectedBookings
+        - totalRevenueCents
+        - cancelRequests
+        - bookingsByStatus
+        - estimatedBagsDiverted
+        - estimatedKgDiverted
+
+    AdminLoginBody:
+      type: object
+      properties:
+        password:
+          type: string
+      required:
+        - password
+
+    AdminLoginResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+        - message
+
+    PricingTier:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        priceCents:
+          type: integer
+        description:
+          type: string
+        bestFor:
+          type: string
+        popular:
+          type: boolean
+        isQuoteOnly:
+          type: boolean
+        estimatedBags:
+          type: integer
+        estimatedKg:
+          type: number
+      required:
+        - id
+        - name
+        - priceCents
+        - description
+        - bestFor
+        - popular
+        - isQuoteOnly
+        - estimatedBags
+        - estimatedKg
+
+    AvailableDates:
+      type: object
+      properties:
+        availableDates:
+          type: array
+          items:
+            type: string
+            format: date
+        fullyBookedDates:
+          type: array
+          items:
+            type: string
+            format: date
+      required:
+        - availableDates
+        - fullyBookedDates
+
+    ImpactStats:
+      type: object
+      properties:
+        estimatedBagsCollected:
+          type: integer
+        estimatedKgDiverted:
+          type: number
+        estimatedItemsSorted:
+          type: integer
+        estimatedCo2eAvoided:
+          type: number
+        disclaimer:
+          type: string
+      required:
+        - estimatedBagsCollected
+        - estimatedKgDiverted
+        - estimatedItemsSorted
+        - estimatedCo2eAvoided
+        - disclaimer
+
+    AuditLogEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        bookingId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        action:
+          type: string
+        details:
+          type: string
+          nullable: true
+      required:
+        - id
+        - bookingId
+        - createdAt
+        - action

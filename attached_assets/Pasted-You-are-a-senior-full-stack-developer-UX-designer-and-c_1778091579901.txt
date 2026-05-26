@@ -1,0 +1,568 @@
+You are a senior full-stack developer, UX designer, and conversion copywriter. Build a production-ready MVP website and booking system for a paid kids’ item collection service in Cranbourne, Victoria, Australia.
+
+Project name:
+Second Life Kids
+
+Primary goal:
+Create a website with booking flow for a paid collection service where local parents can pay online to have unwanted children’s items collected from their home. The service is not a rubbish removal service. It is a convenience + sustainability service that gives reusable children’s items the best chance at a second life.
+
+Tone and copy style:
+Use warm, trustworthy, Australian English.
+Use storytelling and outcome-focused copy.
+Do not make the service sound like a charity.
+Do not lead with donations.
+Do not overpromise that everything avoids landfill.
+Use words like “collection”, “items”, “reuse”, “second life”, “declutter”, “landfill”, “resourceful”, “simple”, and “no selling, no drop-offs, no stress.”
+Avoid “trash” and use “rubbish” only when explaining what is not accepted.
+
+Business model:
+Customers pay for Trevor/Second Life Kids to collect unwanted children’s items from homes in Cranbourne and nearby suburbs.
+After collection, items are sorted:
+- A-grade reusable items may be listed for resale on the 0 to 17 app.
+- B/C-grade reusable items may be bundled for responsible reuse/export partners.
+- Unsold items after a 5-month cap may be removed from the app and moved through reuse/export channels.
+- Recycling is used when appropriate.
+- Landfill is only a last resort where there is no reasonable reuse/recycling option.
+
+Important positioning:
+This is a paid convenience service, not a free donation pickup.
+The customer outcome is:
+- clear the clutter
+- no selling
+- no drop-offs
+- no need to be home
+- items get a better outcome than sitting in storage or going straight to landfill
+
+Tech stack:
+Use:
+- React + Vite + TypeScript for the frontend
+- Tailwind CSS for styling
+- Node.js + Express for the backend
+- SQLite for the MVP database
+- Stripe Checkout for payment
+- Zod or equivalent validation
+- Clean, simple file structure
+- Environment variables for all secrets
+
+Do not store card details. All payment details must be handled by Stripe Checkout.
+
+Required routes/pages:
+1. / or /book-collection
+   Main landing page and booking entry point.
+
+2. /success
+   Payment success page. It should retrieve the Stripe session status and show the confirmed booking details.
+
+3. /cancel
+   Payment cancelled page. It should let the user return to the booking form.
+
+4. /admin
+   Simple password-protected admin dashboard using ADMIN_PASSWORD from env.
+   Admin should be able to:
+   - View bookings
+   - Filter by status
+   - View booking details
+   - Export bookings as CSV
+   - Mark bookings as collected
+   - Mark bookings as cancelled
+   - See Stripe payment status/session ID
+
+5. /api/create-checkout-session
+   Backend endpoint that creates the Stripe Checkout session.
+
+6. /api/stripe-webhook
+   Stripe webhook endpoint that listens for checkout.session.completed and marks the booking as paid.
+
+7. /api/bookings
+   Create/read booking records.
+
+8. /api/cancel-request
+   Allow customers to request cancellation using booking ID and email.
+
+Environment variables:
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+APP_URL=
+ADMIN_PASSWORD=
+DATABASE_URL=
+SMTP_HOST=
+SMTP_PORT=
+SMTP_USER=
+SMTP_PASS=
+NOTIFICATION_EMAIL=
+
+If SMTP variables are not set, log emails to the console instead of failing.
+
+Stripe requirements:
+Use Stripe Checkout in payment mode.
+Currency: AUD.
+Use automatic_payment_methods enabled.
+Create one-time payment line items using price_data.
+Pass booking ID, selected tier, pickup date, customer name, email, phone, suburb, postcode, and address in Stripe metadata.
+Success URL:
+APP_URL/success?session_id={CHECKOUT_SESSION_ID}
+Cancel URL:
+APP_URL/cancel?booking_id=<bookingId>
+
+Use this general Stripe flow:
+1. User completes booking form.
+2. Backend creates a pending booking in SQLite.
+3. Backend creates Stripe Checkout Session.
+4. User is redirected to Stripe-hosted Checkout.
+5. Stripe webhook confirms successful payment.
+6. Booking status changes from PENDING_PAYMENT to PAID.
+7. Customer sees success page.
+8. Admin can see booking in dashboard.
+
+Booking flow:
+Step 1: Select collection size.
+Step 2: Choose pickup date.
+Step 3: Enter contact and address details.
+Step 4: Confirm item rules and cancellation policy.
+Step 5: Pay securely through Stripe Checkout.
+
+Collection schedule:
+Collections are only available on Mondays and Wednesdays.
+Collection window: 8:30 AM – 5:00 PM.
+Users do not need to be home.
+Users must leave items in a safe, dry, accessible location.
+
+Booking date rules:
+- Disable all days except Monday and Wednesday.
+- Disable past dates.
+- Disable same-day bookings.
+- Add a configurable MAX_BOOKINGS_PER_DAY setting, default 12.
+- If a day is full, show it as unavailable.
+
+Service area:
+Launch area: Cranbourne and nearby suburbs within roughly 20 km.
+Use “Cranbourne + nearby suburbs” in the copy.
+Add a simple editable allowed-suburbs/postcodes config file.
+For MVP, include a fallback message when a suburb/postcode is not recognised:
+“Looks like you may be outside our current pickup area. Send us your details and we’ll confirm whether we can collect from you.”
+
+Pricing tiers:
+Use these default tiers, but keep them in a single editable config file.
+
+Small Collection
+Price: $45 AUD
+Best for: 1–2 bags / up to roughly 5kg
+Description: A quick clear-out of outgrown clothes, shoes, small toys, books, or bedding.
+
+Medium Collection
+Price: $75 AUD
+Best for: 3–5 bags / family wardrobe clear-out
+Mark as “Most popular”
+Description: Ideal when the kids’ cupboards, toy baskets, and linen shelves need a proper reset.
+
+Large Collection
+Price: $110 AUD
+Best for: 6–10 bags
+Description: For bigger declutters across clothing, toys, shoes, books, and bedding.
+
+XL Collection
+Price: From $160 AUD
+Best for: 10+ bags
+Do not take payment immediately.
+Use a “Request a quote” button that opens a quote form instead of Stripe Checkout.
+
+Accepted items:
+- Kids clothing
+- Baby and children’s shoes
+- Toys
+- Books
+- Bedding
+- Linen
+- Soft goods
+- Reusable baby gear that is clean, dry, and safe
+
+Condition rules:
+Accepted items can be old, outgrown, or lightly stained, as long as they are dry and suitable for reuse, resale, export reuse, or recycling.
+
+Rejected items:
+- Wet items
+- Mouldy items
+- Broken or unsafe items
+- General household rubbish
+- Expired car seats
+- Car seats with unknown safety history
+- Prams
+- Beds
+- Mattresses
+- Anything hazardous
+- Anything contaminated
+- Food waste
+- Nappies
+- Sharp items
+
+Add clear messaging:
+“This is a reuse and resourcefulness service, not landfill disposal. If an item is broken, unsafe, wet, mouldy, or general rubbish, please do not include it.”
+
+Cancellation policy:
+- More than 24 hours before pickup: full refund.
+- Less than 24 hours before pickup: booking fee applies.
+- Customers can submit a cancellation request using booking ID and email.
+- Do not automatically refund less-than-24-hour cancellations.
+- For more-than-24-hour cancellations, create the cancellation request and show admin action needed. Include the Stripe payment intent/session ID so Trevor can refund from Stripe dashboard, unless automatic refund is easy and safe to implement.
+
+Required landing page sections:
+
+1. Header
+Logo text: Second Life Kids
+Small subtext: by Zero 2 Seventeen
+Navigation:
+- How it works
+- Pricing
+- What we take
+- FAQ
+Primary CTA: Book a Pickup
+
+2. Hero section
+Headline:
+Clear the kids’ clutter without the selling, sorting, or landfill guilt.
+
+Subheadline:
+A simple paid collection service for Cranbourne families and nearby suburbs Pack your unwanted children’s items, leave them somewhere safe and dry, and we’ll collect, sort, and give them the best chance at a second life.
+
+CTA button:
+Book a Pickup
+
+Secondary CTA:
+See what we collect
+
+Trust notes:
+From $45
+No app required
+No need to be home
+Monday & Wednesday pickups
+
+3. Story section
+Headline:
+Kids grow fast. The clutter grows faster.
+
+Body copy:
+One day it’s tiny shoes, baby blankets, picture books, and toys they loved. The next, it’s bags of things sitting in cupboards, garages, and spare rooms because selling takes time, drop-offs are a hassle, and throwing usable items away never feels right.
+
+Second Life Kids was created to make the next step simple. You book a collection, pack what you no longer need, and we take care of the sorting. The best items can find a new family through 0 to 17, and the rest is moved through reuse, recycling, or responsible second-life channels wherever possible.
+
+This is decluttering with a better outcome.
+
+4. How it works
+Use five cards:
+1. Book your pickup online
+Choose your collection size and select a Monday or Wednesday pickup.
+
+2. Pack your items
+Use bags or boxes. Keep everything dry and accessible.
+
+3. Leave them ready
+Place items in a safe, dry spot outside or provide access instructions. You do not need to be home.
+
+4. We collect and sort
+We collect during the 8:30 AM – 5:00 PM pickup window and sort items by condition and reuse potential.
+
+5. Items get a second life
+Items are directed to resale, reuse, export reuse, recycling, or other responsible channels.
+
+5. Pricing section
+Display the four tiers as cards:
+Small $45
+Medium $75 Most popular
+Large $110
+XL From $160 Request quote
+
+Each paid tier needs a “Book this pickup” button that starts the booking flow with that tier selected.
+XL needs “Request a quote” and should not go to Stripe.
+
+6. What we accept section
+Use two columns:
+We take:
+- Kids clothing
+- Shoes
+- Toys
+- Books
+- Bedding and linen
+- Reusable baby gear
+- Clean, dry children’s items
+
+We do not take:
+- Wet or mouldy items
+- Broken or unsafe items
+- Expired car seats
+- Prams
+- Beds or mattresses
+- General rubbish
+- Hazardous or contaminated items
+
+7. Impact section
+Headline:
+A better ending for the things they’ve outgrown.
+
+Copy:
+Every collection is sorted with one goal: keep useful children’s items moving for as long as possible. Some items are ready for a new family. Some need a different reuse pathway. Some may be recycled. The point is simple: fewer useful things sitting forgotten, and fewer usable items heading straight to landfill.
+
+Add an “estimated impact tracker” component.
+It should show:
+- Estimated bags collected
+- Estimated kg diverted
+- Estimated items sorted
+- Estimated CO2e avoided, but label clearly as an estimate
+
+Important:
+Do not fake live data.
+Use config values or database totals from paid bookings.
+Label all environmental numbers as estimates.
+Include small text:
+“Impact figures are estimates based on booked collection size and may change after sorting.”
+
+8. Pickup schedule section
+Headline:
+Pickup days
+
+Copy:
+We currently collect in Cranbourne and nearby suburbs on Mondays and Wednesdays between 8:30 AM and 5:00 PM.
+
+Add notes:
+- You do not need to be home.
+- Items must be left somewhere safe, dry, and accessible.
+- Pickup timing may vary depending on the day’s route.
+- We’ll send confirmation after your booking is paid.
+
+9. FAQ section
+Include accordion FAQs:
+Q: Do I need to download an app?
+A: No. You can book your pickup directly through this page.
+
+Q: Do I need to be home?
+A: No. Leave your packed items in a safe, dry, accessible location and add instructions during booking.
+
+Q: Is this a donation service?
+A: No. This is a paid collection and sorting service designed to make decluttering easier and give usable children’s items a better second-life pathway.
+
+Q: What condition do items need to be in?
+A: Items must be dry and safe to handle. Older, outgrown, or lightly stained clothing is okay. Wet, mouldy, broken, hazardous, or unsafe items are not accepted.
+
+Q: Do you take car seats?
+A: We do not accept expired car seats or car seats with unknown safety history.
+
+Q: Do you take prams or beds?
+A: Not in the standard collection service.
+
+Q: What happens after collection?
+A: Items are sorted. The best reusable items may be listed through 0 to 17. Other usable items may go through reuse, export reuse, recycling, or other second-life channels.
+
+Q: What if I include rejected items?
+A: Rejected items may be left behind or may result in a follow-up fee. This service is not for general rubbish disposal.
+
+Q: What is the cancellation policy?
+A: More than 24 hours before pickup: full refund. Less than 24 hours before pickup: booking fee applies.
+
+Q: What if I am outside the pickup area?
+A: Submit your details and we’ll confirm whether we can collect from your suburb.
+
+10. Final CTA
+Headline:
+Ready to clear the clutter?
+
+Copy:
+Book your pickup, pack the items, and leave the rest to us.
+
+CTA:
+Book a Pickup
+
+Footer:
+Second Life Kids
+Powered by Zero 2 Seventeen Pty Ltd
+Melbourne, Australia
+Links:
+Terms
+Privacy
+Contact
+
+Booking form fields:
+- Selected tier
+- Pickup date
+- Full name
+- Email
+- Phone
+- Address line 1
+- Address line 2 optional
+- Suburb
+- State default VIC
+- Postcode
+- Safe place / access instructions
+- Item notes
+- Checkbox: I confirm items will be clean, dry, safe, and accepted under the item rules.
+- Checkbox: I understand rejected items may be left behind or may result in a follow-up fee.
+- Checkbox: I understand items become the property of Second Life Kids once collected.
+- Checkbox: I agree to the cancellation policy.
+- Checkbox: I agree to the terms and privacy policy.
+
+Database schema:
+Create a Booking table with:
+id
+createdAt
+updatedAt
+status: DRAFT, PENDING_PAYMENT, PAID, CANCEL_REQUESTED, CANCELLED, COLLECTED, REFUNDED
+tierId
+tierName
+priceCents
+pickupDate
+customerName
+email
+phone
+addressLine1
+addressLine2
+suburb
+state
+postcode
+safePlaceInstructions
+itemNotes
+termsAccepted
+stripeSessionId
+stripePaymentIntentId
+stripePaymentStatus
+estimatedKg
+estimatedBags
+adminNotes
+
+Create a CancellationRequest table with:
+id
+bookingId
+createdAt
+reason
+eligibleForFullRefund
+status
+
+Create an AuditLog table with:
+id
+bookingId
+createdAt
+action
+details
+
+Email notifications:
+After successful payment, send:
+1. Customer confirmation email
+2. Admin notification email
+
+Customer confirmation email should include:
+- Booking ID
+- Pickup date
+- Collection window
+- Selected tier
+- Address
+- Safe place instructions
+- What to do before pickup
+- Cancellation policy
+
+Admin notification should include:
+- Customer name
+- Phone
+- Email
+- Address
+- Pickup date
+- Tier
+- Item notes
+- Stripe session ID
+
+Design requirements:
+- Mobile-first responsive design
+- Clean, modern, warm design
+- Use soft neutrals, green accents, rounded cards, simple icons
+- Make the page feel local, trustworthy, and practical
+- Use strong CTAs
+- Use accessible contrast
+- Add form validation and helpful error messages
+- Add loading states
+- Add success/error states
+- Add SEO meta title and description
+
+SEO:
+Title:
+Kids Item Collection Cranbourne | Second Life Kids
+
+Meta description:
+Book a paid pickup for unwanted children’s items in Cranbourne and nearby suburbs. No selling, no drop-offs, no stress — we collect, sort, and help give kids’ items a second life.
+
+Use JSON-LD schema for LocalBusiness or Service.
+
+Security:
+- Never expose STRIPE_SECRET_KEY in frontend code.
+- Validate all backend inputs.
+- Use environment variables.
+- Do not store card details.
+- Add basic rate limiting to booking and API routes if practical.
+- Protect /admin with password session or simple secure login.
+- Do not commit secrets.
+
+Testing requirements:
+Create a README with:
+- How to run locally
+- Required env vars
+- How to create Stripe webhook locally
+- How to use Stripe test mode
+- How to test a successful payment
+- How to test a cancelled payment
+- How to test admin dashboard
+- How to change pricing, pickup days, and allowed suburbs
+
+Acceptance criteria:
+- The website  is polished and conversion-focused.
+- Users can select a paid tier and choose only Monday/Wednesday dates.
+- Users can enter booking details and proceed to Stripe Checkout.
+- Stripe payment success updates the booking to PAID.
+- Success page displays the booking confirmation.
+- Admin dashboard shows paid bookings.
+- Pricing, schedule, suburbs, and copy are easy to edit.
+- XL quote flow does not charge the customer.
+- The app runs without errors using npm install and npm run dev.
+IMPORTANT SERVICE SCOPE:
+This website is only for unwanted children’s and baby-related items.
+
+This is NOT a general rubbish removal service.
+This is NOT a household junk removal service.
+This is NOT for adult clothing, furniture, appliances, renovation waste, garden waste, or general household rubbish.
+
+The service is specifically for families who want to clear out kids’ items their children have outgrown.
+
+Accepted item categories:
+- Kids clothing
+- Baby clothing
+- Children’s shoes
+- Baby shoes
+- Toys
+- Books
+- Bedding
+- Linen
+- Soft goods
+- Reusable baby/kids gear, only if approved
+- Other clean, dry, kid-related items
+
+Rejected item categories:
+- General rubbish
+- Adult clothing
+- Household junk
+- Broken or unsafe items
+- Wet or mouldy items
+- Hazardous items
+- Food waste
+- Nappies
+- Contaminated items
+- Expired car seats
+- Car seats with unknown safety history
+- Beds and mattresses
+- Prams, unless the business owner decides to allow them as a special add-on
+- Cots, unless the business owner decides to allow them as a special add-on
+
+Messaging rule:
+Every page, CTA, FAQ, and form should make it clear that this is a kids’ item collection service. Do not describe it as rubbish pickup, junk removal, or general waste disposal.
+
+Recommended wording:
+“Kids grow fast. We collect the things they’ve outgrown.”
+
+Avoid:
+“Rubbish collection”
+“Junk removal”
+“Waste pickup”
+“General household collection”

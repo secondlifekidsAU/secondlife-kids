@@ -1,0 +1,37 @@
+uploads = []
+
+[[generated]]
+id = "KNCa_FUXfk9biPQ4oLURO"
+uri = "file://attached_assets/second_life_kids_wordmark.png"
+type = "image"
+title = "second life kids wordmark logo"
+
+[[outputs]]
+id = "lFVgQs2OafMOzu9pqcgQh"
+uri = "file://attached_assets/stock_images/hero_pickup_1.jpg"
+type = "image"
+title = "Option 1"
+
+[[outputs]]
+id = "465y71a464H1bbSGY2Spi"
+uri = "file://attached_assets/stock_images/hero_pickup_2.jpg"
+type = "image"
+title = "Option 2"
+
+[[outputs]]
+id = "Z7kcIdbMOhV9i0CMfScbW"
+uri = "file://attached_assets/stock_images/hero_pickup_3.jpg"
+type = "image"
+title = "Option 3"
+
+[[outputs]]
+id = "ocKvaiOyAA4CSD6nMT1aJ"
+uri = "file://attached_assets/stock_images/hero_pickup_4.jpg"
+type = "image"
+title = "Option 4"
+
+[[outputs]]
+id = "cJh9eQU16KnuHL2UUKZ_t"
+uri = "file://attached_assets/second_life_kids_wordmark.png"
+type = "image"
+title = "Second Life Kids — Wordmark Logo"

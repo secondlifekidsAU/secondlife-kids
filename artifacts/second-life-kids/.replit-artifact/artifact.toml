@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Second Life Kids"
+version = "1.0.0"
+id = "artifacts/second-life-kids"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19115
+
+[services.development]
+run = "pnpm --filter @workspace/second-life-kids run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/second-life-kids", "run", "build" ]
+publicDir = "artifacts/second-life-kids/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19115"
+BASE_PATH = "/"
