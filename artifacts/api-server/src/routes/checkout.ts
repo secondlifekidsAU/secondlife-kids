@@ -71,7 +71,6 @@ router.post("/create-session", async (req, res) => {
           postcode: booking.postcode,
         },
       },
-      automatic_payment_methods: { enabled: true },
       line_items: [
         {
           price_data: {
