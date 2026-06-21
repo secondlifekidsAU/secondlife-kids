@@ -96,7 +96,8 @@ CANCELLATION POLICY
 More than 24 hours before pickup: full refund, no questions asked
 Within 24 hours of pickup: no refund — full booking amount is charged
 
-To cancel, visit our website with your Booking ID: ${booking.id}
+To cancel your booking, visit: https://secondlifekids.com.au/cancel-request
+Your Booking ID: ${booking.id}
 
 ---
 
@@ -212,7 +213,7 @@ secondlifekids.com.au
         <tr>
           <td style="padding:0 40px 32px;">
             <p style="margin:0;font-size:13px;color:#888;line-height:1.6;">
-              <strong>Cancellation policy:</strong> Full refund if cancelled more than 24 hours before pickup. No refund for cancellations within 24 hours — the full booking amount is charged. To cancel, visit our website with Booking ID: <code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;">${booking.id}</code>
+              <strong>Cancellation policy:</strong> Full refund if cancelled more than 24 hours before pickup. No refund for cancellations within 24 hours — the full booking amount is charged. To cancel, <a href="https://secondlifekids.com.au/cancel-request" style="color:#2d6a4f;">visit our cancellation page</a> with your Booking ID: <code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;">${booking.id}</code>
             </p>
           </td>
         </tr>
@@ -309,9 +310,24 @@ secondlifekids.com.au
           </td>
         </tr>
         <tr>
-          <td style="padding:0 40px 32px;text-align:center;">
-            <p style="margin:0 0 16px;font-size:14px;color:#555;">Loved the service? Tell a friend — word of mouth means everything to us.</p>
-            <a href="https://secondlifekids.com.au" style="display:inline-block;background:#2d6a4f;color:#ffffff;text-decoration:none;padding:12px 28px;border-radius:8px;font-size:15px;font-weight:600;">Visit Second Life Kids</a>
+          <td style="padding:0 40px 32px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background:#fffbea;border:1px solid #f0e68c;border-radius:10px;padding:24px;">
+              <tr><td style="text-align:center;">
+                <p style="margin:0 0 6px;font-size:20px;">⭐️⭐️⭐️⭐️⭐️</p>
+                <p style="margin:0 0 8px;font-size:16px;font-weight:700;color:#1a2e1a;">Enjoyed the experience?</p>
+                <p style="margin:0 0 20px;font-size:14px;color:#555;line-height:1.6;">A quick review helps other local families find us — and it means the world to a small business. It only takes 30 seconds.</p>
+                <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+                  <tr>
+                    <td style="padding:0 6px;">
+                      <a href="https://g.page/r/secondlifekids/review" style="display:inline-block;background:#2d6a4f;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;">⭐ Leave a Google Review</a>
+                    </td>
+                    <td style="padding:0 6px;">
+                      <a href="https://www.facebook.com/secondlifekids" style="display:inline-block;background:#1877f2;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;">👍 Recommend on Facebook</a>
+                    </td>
+                  </tr>
+                </table>
+              </td></tr>
+            </table>
           </td>
         </tr>
         <tr>
