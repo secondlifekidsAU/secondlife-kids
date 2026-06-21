@@ -98,6 +98,22 @@ function useUpdateQuoteStatus() {
   };
 }
 
+function useUpdateCancellationStatus() {
+  return async (cancellationId: string, status: "APPROVED" | "REJECTED") => {
+    const res = await fetch(`${BASE}/api/admin/cancellations/${cancellationId}/status`, {
+      method: "PATCH",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || "Failed to update cancellation");
+    }
+    return res.json();
+  };
+}
+
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<"bookings" | "quotes">("bookings");
@@ -126,6 +142,8 @@ export default function AdminPage() {
 
   const { quotes, loading: loadingQuotes, refetch: refetchQuotes } = useAdminQuotes(isAuthenticated);
   const updateQuoteStatus = useUpdateQuoteStatus();
+  const updateCancellationStatus = useUpdateCancellationStatus();
+  const [cancellationLoading, setCancellationLoading] = useState<string | null>(null);
 
   const loginForm = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -161,6 +179,26 @@ export default function AdminPage() {
       if (selectedBookingId === id) setSelectedBookingId(null);
     } catch (e) {
       toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
+    }
+  };
+
+  const handleCancellationAction = async (cancellationId: string, action: "APPROVED" | "REJECTED") => {
+    setCancellationLoading(action);
+    try {
+      await updateCancellationStatus(cancellationId, action);
+      toast({
+        title: action === "APPROVED" ? "Cancellation approved" : "Cancellation rejected",
+        description: action === "APPROVED"
+          ? "Booking cancelled, Stripe refund issued (if eligible), and customer notified."
+          : "Booking restored to active. Customer notified.",
+      });
+      setSelectedBookingId(null);
+      refetchBookings();
+      refetchStats();
+    } catch (e: any) {
+      toast({ title: "Error", description: e?.message || "Something went wrong", variant: "destructive" });
+    } finally {
+      setCancellationLoading(null);
     }
   };
 
@@ -536,13 +574,54 @@ export default function AdminPage() {
                     </div>
                   )}
 
+                  {/* Cancellation Request Panel */}
+                  {bookingDetail.status === "CANCEL_REQUESTED" && bookingDetail.cancellationRequests && bookingDetail.cancellationRequests.length > 0 && (() => {
+                    const pending = (bookingDetail.cancellationRequests as any[]).find((r: any) => r.status === "PENDING");
+                    if (!pending) return null;
+                    return (
+                      <div className="border border-amber-200 bg-amber-50 rounded-lg p-4 space-y-3">
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-semibold text-sm text-amber-800">Cancellation Request</h4>
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${pending.eligibleForFullRefund ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                            {pending.eligibleForFullRefund ? "Eligible for full refund" : "Within 24 hrs — no refund"}
+                          </span>
+                        </div>
+                        {pending.reason && (
+                          <p className="text-sm text-amber-900"><span className="font-medium">Reason:</span> {pending.reason}</p>
+                        )}
+                        <p className="text-xs text-amber-700">Submitted {format(new Date(pending.createdAt), "dd MMM yyyy, h:mm a")}</p>
+                        <div className="flex gap-2 pt-1">
+                          <Button
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            disabled={cancellationLoading !== null}
+                            onClick={() => handleCancellationAction(pending.id, "APPROVED")}
+                          >
+                            {cancellationLoading === "APPROVED" ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
+                            {pending.eligibleForFullRefund ? "Approve & Refund" : "Approve (no refund)"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="border-red-300 text-red-700 hover:bg-red-50"
+                            disabled={cancellationLoading !== null}
+                            onClick={() => handleCancellationAction(pending.id, "REJECTED")}
+                          >
+                            {cancellationLoading === "REJECTED" ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : null}
+                            Reject
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
                   <div className="border-t pt-4 flex gap-3 justify-end">
                     {bookingDetail.status === "PAID" && (
                       <Button onClick={() => handleUpdateStatus(bookingDetail.id, BookingStatus.COLLECTED)}>
                         Mark as Collected
                       </Button>
                     )}
-                    {(bookingDetail.status === "PAID" || bookingDetail.status === "CANCEL_REQUESTED") && (
+                    {bookingDetail.status === "PAID" && (
                       <Button variant="destructive" onClick={() => handleUpdateStatus(bookingDetail.id, BookingStatus.CANCELLED)}>
                         Mark as Cancelled
                       </Button>

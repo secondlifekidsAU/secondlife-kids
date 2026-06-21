@@ -114,11 +114,11 @@ export default function Terms() {
               </p>
               <ul className="list-disc list-inside space-y-2 mt-3 text-muted-foreground">
                 <li><strong>More than 24 hours before pickup:</strong> Full refund, no questions asked.</li>
-                <li><strong>Within 24 hours of pickup:</strong> A booking fee applies. The remainder of your payment will be refunded. This is because your pickup day has already been planned around your address and route adjustments are not possible at short notice.</li>
+                <li><strong>Within 24 hours of pickup:</strong> No refund will be issued. The full booking amount will be charged. This is because your pickup day has already been planned and route adjustments are not possible at short notice.</li>
                 <li><strong>No-show (items not put out):</strong> No refund will be issued. If you are unable to put items out, please contact us as early as possible and we will do our best to reschedule.</li>
               </ul>
               <p className="text-muted-foreground leading-relaxed mt-3">
-                To request a cancellation, please email us at secondlifekids@zero2seventeen.com with your booking reference.
+                To request a cancellation, use the cancellation form on our website with your Booking ID, or email us at secondlifekids@zero2seventeen.com.
               </p>
               <p className="text-muted-foreground leading-relaxed mt-3">
                 Nothing in this cancellation policy limits your rights under the Australian Consumer Law (Competition and Consumer Act 2010 (Cth)).

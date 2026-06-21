@@ -505,7 +505,7 @@ function RulesForm({ onBack, onSubmit }: { onBack: () => void, onSubmit: (data: 
             <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
               <FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>I agree to the cancellation policy (full refund {">"}24hr, booking fee applies {"<"}24hr)</FormLabel>
+                <FormLabel>I understand the cancellation policy: full refund if cancelled more than 24 hours before pickup; no refund if cancelled within 24 hours</FormLabel>
               </div>
             </FormItem>
           )} />

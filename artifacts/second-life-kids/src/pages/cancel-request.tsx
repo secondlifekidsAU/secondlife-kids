@@ -91,8 +91,8 @@ export default function CancelRequestPage() {
           <Alert className="bg-card">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              Cancellations made more than 24 hours before your pickup day are eligible for a full refund.
-              Cancellations within 24 hours will incur a booking fee.
+              <strong>Cancellation policy:</strong> Cancel more than 24 hours before your pickup and you'll receive a full refund.
+              Cancel within 24 hours of your pickup and no refund will be issued — the full booking amount will be charged.
             </AlertDescription>
           </Alert>
 

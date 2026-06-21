@@ -93,8 +93,8 @@ BEFORE YOUR PICKUP
 
 CANCELLATION POLICY
 -------------------
-More than 24 hours before pickup: full refund
-Less than 24 hours before pickup: booking fee applies
+More than 24 hours before pickup: full refund, no questions asked
+Within 24 hours of pickup: no refund — full booking amount is charged
 
 To cancel, visit our website with your Booking ID: ${booking.id}
 
@@ -212,7 +212,7 @@ secondlifekids.com.au
         <tr>
           <td style="padding:0 40px 32px;">
             <p style="margin:0;font-size:13px;color:#888;line-height:1.6;">
-              <strong>Cancellation policy:</strong> Full refund if cancelled more than 24 hours before pickup. A booking fee applies for cancellations within 24 hours. To cancel, visit our website with Booking ID: <code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;">${booking.id}</code>
+              <strong>Cancellation policy:</strong> Full refund if cancelled more than 24 hours before pickup. No refund for cancellations within 24 hours — the full booking amount is charged. To cancel, visit our website with Booking ID: <code style="background:#f0f0f0;padding:1px 4px;border-radius:3px;">${booking.id}</code>
             </p>
           </td>
         </tr>
