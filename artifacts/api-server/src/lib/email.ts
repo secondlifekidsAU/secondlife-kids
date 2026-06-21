@@ -319,10 +319,7 @@ secondlifekids.com.au
                 <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
                   <tr>
                     <td style="padding:0 6px;">
-                      <a href="https://g.page/r/secondlifekids/review" style="display:inline-block;background:#2d6a4f;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;">⭐ Leave a Google Review</a>
-                    </td>
-                    <td style="padding:0 6px;">
-                      <a href="https://www.facebook.com/secondlifekids" style="display:inline-block;background:#1877f2;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;">👍 Recommend on Facebook</a>
+                      <a href="https://www.facebook.com/profile.php?id=61590213497786" style="display:inline-block;background:#1877f2;color:#ffffff;text-decoration:none;padding:11px 22px;border-radius:8px;font-size:14px;font-weight:600;">👍 Recommend on Facebook</a>
                     </td>
                   </tr>
                 </table>

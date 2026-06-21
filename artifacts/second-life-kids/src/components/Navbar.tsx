@@ -1,9 +1,9 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 
 export default function Navbar() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  const isHome = location === "/";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -15,15 +15,24 @@ export default function Navbar() {
           <span className="text-xl font-bold tracking-tight text-primary">Second Life Kids</span>
         </button>
 
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setLocation("/")}
-          className="gap-2 text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Home
-        </Button>
+        <div className="flex items-center gap-2">
+          {!isHome && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setLocation("/cancel-request")}
+              className="text-muted-foreground hover:text-foreground text-sm"
+            >
+              Cancel booking
+            </Button>
+          )}
+          <Button
+            size="sm"
+            onClick={() => setLocation("/book")}
+          >
+            Book a pickup
+          </Button>
+        </div>
       </div>
     </header>
   );
