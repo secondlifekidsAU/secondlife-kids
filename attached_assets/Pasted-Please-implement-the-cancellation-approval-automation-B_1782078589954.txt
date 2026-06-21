@@ -1,0 +1,65 @@
+Please implement the cancellation approval automation.
+
+Based on the read-only report, make these changes only where needed:
+
+Files to update:
+
+1. artifacts/api-server/src/routes/admin.ts
+2. artifacts/api-server/src/lib/email.ts
+
+Required behavior:
+
+Create a new admin endpoint:
+
+PATCH /api/admin/cancellations/:id/status
+
+The endpoint should accept a status of APPROVED or REJECTED.
+
+When status is APPROVED:
+
+1. Find the cancellation request by ID.
+2. Find the related booking using booking_id.
+3. Confirm the booking has a stripe_payment_intent_id.
+4. If eligible_for_full_refund is true, call Stripe refund using:
+
+stripe.refunds.create({
+payment_intent: booking.stripePaymentIntentId
+})
+
+5. Update the cancellation_requests row to APPROVED.
+6. Update the booking status from CANCEL_REQUESTED to CANCELLED.
+7. Update stripe_payment_status from paid to refunded after the Stripe refund succeeds.
+8. Write an audit log entry showing the cancellation was approved and refunded.
+9. Send the customer a cancellation approval email confirming the cancellation and refund.
+
+When status is REJECTED:
+
+1. Update the cancellation_requests row to REJECTED.
+2. Update the booking status back to CONFIRMED or the correct previous active status.
+3. Write an audit log entry.
+4. Send the customer a cancellation rejection email.
+
+In artifacts/api-server/src/lib/email.ts, add:
+
+sendCancellationApprovedEmail(booking)
+sendCancellationRejectedEmail(booking)
+
+Use the same email provider and formatting style already used by the existing booking confirmation emails.
+
+Important safety requirements:
+
+* Do not refund twice if a booking is already refunded.
+* Do not approve a cancellation if the booking does not exist.
+* Do not call Stripe if there is no stripe_payment_intent_id.
+* Return clear error messages for missing booking, missing Stripe ID, Stripe refund failure, or already refunded status.
+* Keep existing booking confirmation automation unchanged.
+* Do not change the database schema unless absolutely required.
+* Do not remove any existing routes.
+
+After making the changes, tell me exactly:
+
+1. What files were changed
+2. What endpoint was added
+3. How to test approval
+4. How to test rejection
+5. Whether any Render environment variables are required

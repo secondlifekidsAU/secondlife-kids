@@ -2,6 +2,14 @@ import { Router, Request, Response, NextFunction } from "express";
 import { db, bookingsTable, cancellationRequestsTable, auditLogTable, quoteRequestsTable } from "@workspace/db";
 import { eq, desc, sql, count } from "drizzle-orm";
 import { z } from "zod";
+import { sendCancellationApprovedEmail, sendCancellationRejectedEmail } from "../lib/email";
+
+function getStripe() {
+  const key = process.env["STRIPE_SECRET_KEY"];
+  if (!key) throw new Error("STRIPE_SECRET_KEY is not set");
+  const Stripe = require("stripe");
+  return new Stripe(key, { apiVersion: "2024-06-20" });
+}
 
 const router = Router();
 
@@ -243,6 +251,159 @@ router.get("/stats", requireAdmin, async (req, res) => {
   } catch (err) {
     req.log.error({ err }, "Error fetching admin stats");
     res.status(500).json({ error: "Failed to fetch stats" });
+  }
+});
+
+router.patch("/cancellations/:id/status", requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params as { id: string };
+    const schema = z.object({
+      status: z.enum(["APPROVED", "REJECTED"]),
+    });
+    const { status } = schema.parse(req.body);
+
+    // Load the cancellation request
+    const [cancellation] = await db
+      .select()
+      .from(cancellationRequestsTable)
+      .where(eq(cancellationRequestsTable.id, id))
+      .limit(1);
+
+    if (!cancellation) {
+      res.status(404).json({ error: "Cancellation request not found" });
+      return;
+    }
+
+    if (cancellation.status !== "PENDING") {
+      res.status(400).json({ error: `Cancellation request is already ${cancellation.status}` });
+      return;
+    }
+
+    // Load the related booking
+    const [booking] = await db
+      .select()
+      .from(bookingsTable)
+      .where(eq(bookingsTable.id, cancellation.bookingId))
+      .limit(1);
+
+    if (!booking) {
+      res.status(404).json({ error: "Related booking not found" });
+      return;
+    }
+
+    if (status === "APPROVED") {
+      let refunded = false;
+
+      // Issue Stripe refund if eligible and payment intent exists
+      if (cancellation.eligibleForFullRefund) {
+        if (!booking.stripePaymentIntentId) {
+          res.status(400).json({ error: "Cannot refund: no Stripe payment intent on this booking" });
+          return;
+        }
+
+        if (booking.stripePaymentStatus === "refunded") {
+          res.status(400).json({ error: "This booking has already been refunded" });
+          return;
+        }
+
+        let stripe: ReturnType<typeof getStripe>;
+        try {
+          stripe = getStripe();
+        } catch {
+          res.status(503).json({ error: "Payment processing not configured" });
+          return;
+        }
+
+        try {
+          await stripe.refunds.create({ payment_intent: booking.stripePaymentIntentId });
+          refunded = true;
+        } catch (stripeErr) {
+          req.log.error({ stripeErr }, "Stripe refund failed");
+          res.status(502).json({ error: "Stripe refund failed. No changes were saved." });
+          return;
+        }
+      }
+
+      // Update cancellation request
+      await db
+        .update(cancellationRequestsTable)
+        .set({ status: "APPROVED" })
+        .where(eq(cancellationRequestsTable.id, id));
+
+      // Update booking
+      await db
+        .update(bookingsTable)
+        .set({
+          status: "CANCELLED",
+          ...(refunded ? { stripePaymentStatus: "refunded" } : {}),
+          updatedAt: new Date(),
+        })
+        .where(eq(bookingsTable.id, booking.id));
+
+      // Audit log
+      await db.insert(auditLogTable).values({
+        bookingId: booking.id,
+        action: "CANCELLATION_APPROVED",
+        details: refunded
+          ? `Cancellation approved and full refund issued via Stripe (intent: ${booking.stripePaymentIntentId})`
+          : "Cancellation approved. Not eligible for full refund — no Stripe refund issued.",
+      });
+
+      // Reload booking with updated fields for email
+      const [updatedBooking] = await db
+        .select()
+        .from(bookingsTable)
+        .where(eq(bookingsTable.id, booking.id))
+        .limit(1);
+
+      if (updatedBooking) {
+        await sendCancellationApprovedEmail(updatedBooking, refunded);
+      }
+
+      res.json({
+        success: true,
+        status: "APPROVED",
+        refunded,
+        bookingId: booking.id,
+      });
+
+    } else {
+      // REJECTED
+
+      // Update cancellation request
+      await db
+        .update(cancellationRequestsTable)
+        .set({ status: "REJECTED" })
+        .where(eq(cancellationRequestsTable.id, id));
+
+      // Restore booking to PAID (it was CANCEL_REQUESTED)
+      await db
+        .update(bookingsTable)
+        .set({ status: "PAID", updatedAt: new Date() })
+        .where(eq(bookingsTable.id, booking.id));
+
+      // Audit log
+      await db.insert(auditLogTable).values({
+        bookingId: booking.id,
+        action: "CANCELLATION_REJECTED",
+        details: "Cancellation request rejected. Booking restored to PAID.",
+      });
+
+      await sendCancellationRejectedEmail(booking);
+
+      res.json({
+        success: true,
+        status: "REJECTED",
+        bookingId: booking.id,
+      });
+    }
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      res.status(400).json({ error: "Validation error", details: err.message });
+      return;
+    }
+    req.log.error({ err }, "Error processing cancellation status update");
+    res.status(500).json({ error: "Failed to process cancellation request" });
   }
 });
 
