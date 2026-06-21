@@ -241,6 +241,49 @@ secondlifekids.com.au
   });
 }
 
+export async function sendAdminCancellationNotification(booking: Booking, reason: string | undefined, eligibleForFullRefund: boolean): Promise<void> {
+  const notificationEmail =
+    process.env["NOTIFICATION_EMAIL"] ?? process.env["SMTP_USER"];
+
+  if (!notificationEmail) {
+    logger.info({ bookingId: booking.id }, "No NOTIFICATION_EMAIL set, skipping cancellation notification");
+    return;
+  }
+
+  const pickupDate = new Date(booking.pickupDate + "T00:00:00").toLocaleDateString("en-AU", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+  const refundStatus = eligibleForFullRefund
+    ? "✅ Eligible for full refund (cancelled >24 hrs before pickup)"
+    : "🚫 Not eligible for refund (cancelled within 24 hrs of pickup)";
+
+  const text = `
+New cancellation request — action required
+
+Customer: ${booking.customerName}
+Email: ${booking.email}
+Phone: ${booking.phone}
+Pickup date: ${pickupDate}
+Tier: ${booking.tierName} ($${(booking.priceCents / 100).toFixed(2)} AUD)
+Booking ID: ${booking.id}
+
+Refund eligibility: ${refundStatus}
+Reason given: ${reason ?? "None provided"}
+
+Log in to the admin dashboard to approve or reject this request.
+`;
+
+  await sendEmail({
+    to: notificationEmail,
+    subject: `⚠️ Cancellation Request — ${booking.customerName} — ${pickupDate}`,
+    text,
+  });
+}
+
 export async function sendCancellationApprovedEmail(booking: Booking, refunded: boolean): Promise<void> {
   const pickupDate = new Date(booking.pickupDate + "T00:00:00").toLocaleDateString("en-AU", {
     weekday: "long",

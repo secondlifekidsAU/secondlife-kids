@@ -4,6 +4,7 @@ import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
 import { CreateBookingBody } from "@workspace/api-zod";
 import { differenceInHours, parseISO } from "date-fns";
+import { sendAdminCancellationNotification } from "../lib/email";
 
 const router = Router();
 
@@ -145,6 +146,9 @@ router.post("/:id/cancel-request", async (req, res) => {
       action: "CANCEL_REQUESTED",
       details: `Eligible for full refund: ${eligibleForFullRefund}. Reason: ${body.reason ?? "None"}`,
     });
+
+    // Notify admin — fire and forget, do not block the response
+    sendAdminCancellationNotification(booking, body.reason, eligibleForFullRefund).catch(() => {});
 
     res.json(request);
   } catch (err) {
