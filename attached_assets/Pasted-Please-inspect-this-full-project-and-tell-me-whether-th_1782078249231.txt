@@ -1,0 +1,55 @@
+Please inspect this full project and tell me whether the cancellation request flow is fully automated.
+
+I need you to check specifically:
+
+1. When a customer submits a cancellation request, does the app only save the request in Supabase, or does it also trigger automation?
+
+2. Check whether the app has code that handles the `cancellation_requests` table, especially status values like:
+
+* PENDING
+* APPROVED
+* REJECTED
+
+3. Check whether approving a cancellation request automatically updates the related booking in the `bookings` table from `CANCEL_REQUESTED` to `CANCELLED`.
+
+4. Check whether there is any backend route, function, webhook, Supabase trigger, or scheduled job that runs when a cancellation request is approved.
+
+5. Check whether the cancellation approval sends an email confirmation to the customer.
+
+6. Check whether the cancellation approval triggers a Stripe refund using the saved `stripe_payment_intent_id`.
+
+7. Check whether the app updates `stripe_payment_status` from `paid` to `refunded` after the refund succeeds.
+
+8. Check whether there is an admin approval page, admin button, or API endpoint for approving cancellations.
+
+9. Check whether the current Render environment variables are enough for this to work, especially Stripe secret key, Supabase service role key, and email provider API key.
+
+Please search the codebase for:
+
+* cancellation_requests
+* CANCEL_REQUESTED
+* APPROVED
+* CANCELLED
+* refund
+* stripe.refunds.create
+* stripe_payment_intent_id
+* stripe_payment_status
+* sendEmail
+* nodemailer
+* resend
+* sendgrid
+* webhook
+* cancellation
+
+After inspecting, give me a clear answer:
+
+A. Does cancellation automation currently exist?
+B. What currently happens when a customer requests cancellation?
+C. What currently happens when I manually change the cancellation request to APPROVED in Supabase?
+D. Does the customer receive an email?
+E. Does Stripe automatically refund the payment?
+F. What files contain the cancellation logic?
+G. What is missing?
+H. What exact changes should be made to complete the cancellation approval automation?
+
+Do not make changes yet. First give me a report of what exists and what is missing.
