@@ -1,21 +1,40 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { useLocation } from "wouter";
+import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
-  return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md mx-4">
-        <CardContent className="pt-6">
-          <div className="flex mb-4 gap-2">
-            <AlertCircle className="h-8 w-8 text-red-500" />
-            <h1 className="text-2xl font-bold text-gray-900">404 Page Not Found</h1>
-          </div>
+  const [, setLocation] = useLocation();
 
-          <p className="mt-4 text-sm text-gray-600">
-            Did you forget to add the page to the router?
+  return (
+    <div className="min-h-screen flex flex-col bg-background font-sans">
+      <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
+        <div className="container max-w-6xl mx-auto flex h-16 items-center px-4">
+          <button
+            onClick={() => setLocation("/")}
+            className="flex flex-col text-left hover:opacity-80 transition-opacity"
+          >
+            <span className="text-xl font-extrabold tracking-tight text-primary">Second Life Kids</span>
+            <span className="text-[0.68rem] tracking-wide text-muted-foreground leading-none mt-1">Kids item collection · Mornington Peninsula</span>
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-1 flex items-center justify-center px-4 py-24">
+        <div className="text-center max-w-md">
+          <p className="text-7xl font-black text-primary/20 leading-none mb-6">404</p>
+          <h1 className="text-3xl font-bold tracking-tight mb-3">Page not found</h1>
+          <p className="text-muted-foreground text-lg mb-8">
+            Sorry — we couldn't find that page. It may have moved or the link might be wrong.
           </p>
-        </CardContent>
-      </Card>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Button onClick={() => setLocation("/")}>Go to Homepage</Button>
+            <Button variant="outline" onClick={() => setLocation("/book")}>Book a Pickup</Button>
+          </div>
+        </div>
+      </main>
+
+      <footer className="py-8 px-4 border-t text-center text-sm text-muted-foreground">
+        <span>© Second Life Kids · Mornington Peninsula, Victoria</span>
+      </footer>
     </div>
   );
 }

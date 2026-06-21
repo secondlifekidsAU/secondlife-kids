@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -116,7 +116,7 @@ function useUpdateCancellationStatus() {
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [activeTab, setActiveTab] = useState<"bookings" | "quotes">("bookings");
+  const [activeTab, setActiveTab] = useState<"bookings" | "quotes" | "cancellations">("bookings");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
 
@@ -134,6 +134,22 @@ export default function AdminPage() {
     statusFilter !== "all" ? { status: statusFilter as any } : undefined,
     { query: { enabled: isAuthenticated, retry: false } }
   );
+
+  const { data: pendingCancellations, refetch: refetchCancellations } = useAdminGetBookings(
+    { status: "CANCEL_REQUESTED" as any },
+    { query: { enabled: isAuthenticated, retry: false } }
+  );
+
+  // Auto-refresh bookings and stats every 30 seconds
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    const interval = setInterval(() => {
+      refetchBookings();
+      refetchStats();
+      refetchCancellations();
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, refetchBookings, refetchStats, refetchCancellations]);
 
   const { data: bookingDetail, isLoading: loadingDetail } = useAdminGetBooking(
     selectedBookingId || "",
@@ -176,6 +192,7 @@ export default function AdminPage() {
       toast({ title: "Status updated" });
       refetchBookings();
       refetchStats();
+      refetchCancellations();
       if (selectedBookingId === id) setSelectedBookingId(null);
     } catch (e) {
       toast({ title: "Error", description: "Failed to update status", variant: "destructive" });
@@ -195,6 +212,7 @@ export default function AdminPage() {
       setSelectedBookingId(null);
       refetchBookings();
       refetchStats();
+      refetchCancellations();
     } catch (e: any) {
       toast({ title: "Error", description: e?.message || "Something went wrong", variant: "destructive" });
     } finally {
@@ -353,6 +371,22 @@ export default function AdminPage() {
             {quotes.filter(q => q.status === "PENDING").length > 0 && (
               <span className="ml-1 bg-amber-100 text-amber-700 text-xs px-1.5 py-0.5 rounded-full">
                 {quotes.filter(q => q.status === "PENDING").length} new
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab("cancellations")}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "cancellations"
+                ? "border-destructive text-destructive"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Ban className="h-4 w-4" />
+            Cancellations
+            {pendingCancellations && pendingCancellations.length > 0 && (
+              <span className="ml-1 bg-red-100 text-red-700 text-xs px-1.5 py-0.5 rounded-full font-semibold">
+                {pendingCancellations.length} pending
               </span>
             )}
           </button>
@@ -523,6 +557,73 @@ export default function AdminPage() {
           </Card>
         )}
 
+        {/* Cancellations Tab */}
+        {activeTab === "cancellations" && (
+          <Card className="shadow-sm">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-border/50">
+              <div>
+                <CardTitle>Pending Cancellation Requests</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">Bookings awaiting your approval or rejection.</p>
+              </div>
+              <Button variant="outline" size="sm" onClick={refetchCancellations}>
+                <RefreshCw className="h-4 w-4 mr-2" /> Refresh
+              </Button>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Pickup Date</TableHead>
+                    <TableHead>Tier</TableHead>
+                    <TableHead>Submitted</TableHead>
+                    <TableHead>Refund?</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {!pendingCancellations || pendingCancellations.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-12 text-muted-foreground">
+                        No pending cancellation requests.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    pendingCancellations.map(b => {
+                      const req = (b as any).cancellationRequests?.[0];
+                      return (
+                        <TableRow key={b.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedBookingId(b.id)}>
+                          <TableCell>
+                            <p className="font-medium text-sm">{b.customerName}</p>
+                            <p className="text-xs text-muted-foreground">{b.email}</p>
+                          </TableCell>
+                          <TableCell className="text-sm">{format(parseISO(b.pickupDate), "EEE d MMM yyyy")}</TableCell>
+                          <TableCell className="text-sm">{b.tierName}</TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {req ? format(new Date(req.createdAt), "d MMM, h:mm a") : "—"}
+                          </TableCell>
+                          <TableCell>
+                            {req?.eligibleForFullRefund ? (
+                              <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Full refund</span>
+                            ) : (
+                              <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">No refund</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); setSelectedBookingId(b.id); }}>
+                              Review
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Booking Detail Modal */}
         <Dialog open={!!selectedBookingId} onOpenChange={(open) => !open && setSelectedBookingId(null)}>
           <DialogContent className="sm:max-w-[600px]">
@@ -614,6 +715,30 @@ export default function AdminPage() {
                       </div>
                     );
                   })()}
+
+                  {/* Audit Log */}
+                  {(bookingDetail as any).auditLog && (bookingDetail as any).auditLog.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground mb-2">Activity History</h4>
+                      <div className="space-y-2">
+                        {(bookingDetail as any).auditLog.map((entry: any, i: number) => (
+                          <div key={i} className="flex gap-3 text-xs">
+                            <div className="flex flex-col items-center">
+                              <div className="w-2 h-2 rounded-full bg-primary/50 mt-1 shrink-0" />
+                              {i < (bookingDetail as any).auditLog.length - 1 && (
+                                <div className="w-px flex-1 bg-border mt-1" />
+                              )}
+                            </div>
+                            <div className="pb-2">
+                              <p className="font-medium text-foreground">{entry.action?.replace(/_/g, " ")}</p>
+                              {entry.details && <p className="text-muted-foreground">{entry.details}</p>}
+                              <p className="text-muted-foreground/70 mt-0.5">{format(new Date(entry.createdAt), "d MMM yyyy, h:mm a")}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   <div className="border-t pt-4 flex gap-3 justify-end">
                     {bookingDetail.status === "PAID" && (

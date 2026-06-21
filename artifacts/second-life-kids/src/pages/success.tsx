@@ -15,7 +15,13 @@ export default function SuccessPage() {
 
   const { data: booking, isLoading, isError } = useGetBookingBySession(sessionId || "", {
     query: {
-      enabled: !!sessionId
+      enabled: !!sessionId,
+      refetchInterval: (query) => {
+        const status = (query.state.data as any)?.status;
+        if (status === "PAID" || status === "COLLECTED") return false;
+        return 2000;
+      },
+      refetchIntervalInBackground: true,
     }
   });
 
