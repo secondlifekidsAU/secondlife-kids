@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { db, bookingsTable, cancellationRequestsTable, auditLogTable, quoteRequestsTable } from "@workspace/db";
+import { sendCollectionConfirmedEmail } from "../lib/email";
 import { eq, desc, sql, count } from "drizzle-orm";
 import { z } from "zod";
 import { sendCancellationApprovedEmail, sendCancellationRejectedEmail } from "../lib/email";
@@ -202,6 +203,10 @@ router.patch("/bookings/:id/status", requireAdmin, async (req, res) => {
       action: "STATUS_UPDATED",
       details: `Status changed to ${body.status}${body.adminNotes ? ". Note: " + body.adminNotes : ""}`,
     });
+
+    if (body.status === "COLLECTED") {
+      sendCollectionConfirmedEmail(updated).catch(() => {});
+    }
 
     res.json(updated);
   } catch (err) {
