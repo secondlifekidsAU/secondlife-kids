@@ -10,9 +10,9 @@ export default function Navbar() {
       <div className="container max-w-6xl mx-auto flex h-16 items-center justify-between px-4">
         <button
           onClick={() => setLocation("/")}
-          className="flex flex-col text-left hover:opacity-80 transition-opacity"
+          className="flex items-center hover:opacity-80 transition-opacity"
         >
-          <span className="text-xl font-bold tracking-tight text-primary">Second Life Kids</span>
+          <img src="/logo.png" alt="Second Life Kids" className="h-11 w-auto" />
         </button>
 
         <div className="flex items-center gap-2">
@@ -26,10 +26,7 @@ export default function Navbar() {
               Cancel booking
             </Button>
           )}
-          <Button
-            size="sm"
-            onClick={() => setLocation("/book")}
-          >
+          <Button size="sm" onClick={() => setLocation("/book")}>
             Book a pickup
           </Button>
         </div>

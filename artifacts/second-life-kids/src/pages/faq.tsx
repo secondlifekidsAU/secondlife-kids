@@ -91,10 +91,9 @@ export default function FaqPage() {
         <div className="container max-w-6xl mx-auto flex h-16 items-center justify-between px-4">
           <button
             onClick={() => setLocation("/")}
-            className="flex flex-col text-left hover:opacity-80 transition-opacity"
+            className="flex items-center hover:opacity-80 transition-opacity"
           >
-            <span className="text-xl font-extrabold tracking-tight text-primary">Second Life Kids</span>
-            <span className="text-[0.68rem] tracking-wide text-muted-foreground leading-none mt-1">Kids item collection · Mornington Peninsula</span>
+            <img src="/logo.png" alt="Second Life Kids" className="h-11 w-auto" />
           </button>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" onClick={() => setLocation("/cancel-request")} className="text-muted-foreground hover:text-foreground text-sm">
