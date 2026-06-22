@@ -821,6 +821,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm font-medium">
+            <a href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
             <a href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms and Conditions</a>
             <a href="mailto:secondlifekids@zero2seventeen.com" className="text-muted-foreground hover:text-foreground transition-colors">secondlifekids@zero2seventeen.com</a>
             <a

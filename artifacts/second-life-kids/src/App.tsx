@@ -11,6 +11,7 @@ import Cancel from "@/pages/cancel";
 import CancelRequest from "@/pages/cancel-request";
 import Admin from "@/pages/admin";
 import Terms from "@/pages/terms";
+import Faq from "@/pages/faq";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/cancel-request" component={CancelRequest} />
       <Route path="/admin" component={Admin} />
       <Route path="/terms" component={Terms} />
+      <Route path="/faq" component={Faq} />
       <Route component={NotFound} />
     </Switch>
   );
