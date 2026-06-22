@@ -223,7 +223,13 @@ secondlifekids.com.au
           <td style="background:#f4f7f4;padding:24px 40px;text-align:center;border-top:1px solid #e0e8e0;">
             <p style="margin:0 0 4px;font-size:14px;font-weight:600;color:#2d6a4f;">Second Life Kids</p>
             <p style="margin:0;font-size:13px;color:#888;">Mornington Peninsula, Victoria, Australia</p>
-            <p style="margin:8px 0 0;font-size:12px;color:#aaa;">Questions? Reply to this email and we'll get back to you.</p>
+            <p style="margin:10px 0 0;">
+              <a href="https://www.facebook.com/profile.php?id=61590213497786" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:#1877f2;color:#ffffff;text-decoration:none;font-size:13px;font-weight:600;padding:8px 16px;border-radius:6px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:middle;"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                Follow us on Facebook
+              </a>
+            </p>
+            <p style="margin:10px 0 0;font-size:12px;color:#aaa;">Questions? Reply to this email and we'll get back to you.</p>
           </td>
         </tr>
 
