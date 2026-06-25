@@ -79,3 +79,6 @@ externalPort = 3000
 [userenv.shared]
 BASE_PATH = "/"
 NOTIFICATION_EMAIL = "secondlifekids@zero2seventeen.com"
+
+[nix]
+channel = "stable-25_05"
