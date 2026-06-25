@@ -1,4 +1,8 @@
 import { useState, useEffect } from "react";
+
+declare global {
+  interface Window { fbq?: Function; }
+}
 import Navbar from "@/components/Navbar";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -239,6 +243,10 @@ export default function BookPage() {
       const session = await createSession.mutateAsync({
         data: { bookingId: booking.id }
       });
+
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "InitiateCheckout");
+      }
 
       window.location.href = session.url;
     } catch (error) {

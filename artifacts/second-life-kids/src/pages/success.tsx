@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useLocation, useSearch } from "wouter";
 import Navbar from "@/components/Navbar";
 import { useGetBookingBySession } from "@workspace/api-client-react";
@@ -7,11 +8,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
+declare global {
+  interface Window { fbq?: Function; }
+}
+
 export default function SuccessPage() {
   const search = useSearch();
   const params = new URLSearchParams(search);
   const sessionId = params.get("session_id");
   const [, setLocation] = useLocation();
+  const purchaseFired = useRef(false);
 
   const { data: booking, isLoading, isError } = useGetBookingBySession(sessionId || "", {
     query: {
@@ -24,6 +30,18 @@ export default function SuccessPage() {
       refetchIntervalInBackground: true,
     }
   });
+
+  useEffect(() => {
+    if (booking?.status === "PAID" && !purchaseFired.current) {
+      purchaseFired.current = true;
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "Purchase", {
+          value: booking.priceCents / 100,
+          currency: "AUD",
+        });
+      }
+    }
+  }, [booking?.status]);
 
   const renderContent = () => {
     if (!sessionId) {
