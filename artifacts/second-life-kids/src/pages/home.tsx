@@ -1,4 +1,8 @@
 import { useLocation } from "wouter";
+
+declare global {
+  interface Window { fbq?: Function; }
+}
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { ArrowRight, Check, Info, Loader2, MapPin, Star, Menu, X } from "lucide-react";
@@ -56,6 +60,13 @@ const SERVICED_SUBURBS = [
 
 export default function Home() {
   const [, setLocation] = useLocation();
+
+  const goToBook = (tier?: string) => {
+    if (typeof window.fbq === "function") {
+      window.fbq("track", "Lead");
+    }
+    setLocation(tier ? `/book?tier=${tier}` : "/book");
+  };
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [quoteModalOpen, setQuoteModalOpen] = useState(false);
@@ -105,7 +116,7 @@ export default function Home() {
             <a href="#faq" className="text-foreground/80 hover:text-foreground transition-colors">FAQ</a>
           </nav>
           <div className="flex items-center gap-2">
-            <Button onClick={() => setLocation("/book")} className="rounded-full shadow-sm hover:shadow-md transition-all">Book my pickup</Button>
+            <Button onClick={() => goToBook()} className="rounded-full shadow-sm hover:shadow-md transition-all">Book my pickup</Button>
             <button
               className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
               onClick={() => setMobileMenuOpen(o => !o)}
@@ -179,7 +190,7 @@ export default function Home() {
                   <Button
                     size="lg"
                     className="w-full sm:w-auto rounded-full text-base h-14 px-8 shadow-lg bg-white text-primary hover:bg-white/90 font-bold"
-                    onClick={() => setLocation("/book")}
+                    onClick={() => goToBook()}
                     aria-label="Book my kids item pickup starting from $45"
                   >
                     Book my pickup · from $45
@@ -293,7 +304,7 @@ export default function Home() {
                 <p className="text-muted-foreground leading-relaxed">
                   That's exactly what Second Life Kids is for. You book in 2 minutes, pack what they've outgrown, and leave it at the door. We collect it, sort every item by hand, and make sure it reaches the best possible second life. The bags disappear. The guilt disappears with them.
                 </p>
-                <Button variant="outline" className="rounded-full border-primary/30 hover:bg-primary/5" onClick={() => setLocation("/book")}>
+                <Button variant="outline" className="rounded-full border-primary/30 hover:bg-primary/5" onClick={() => goToBook()}>
                   Book my pickup. 2 minutes. <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
@@ -432,7 +443,7 @@ export default function Home() {
                           </div>
                         </div>
                         <button
-                          onClick={() => setLocation(`/book?tier=${tier.id}`)}
+                          onClick={() => goToBook(tier.id)}
                           className="mt-6 w-full rounded-xl bg-white text-primary font-bold py-3 text-sm hover:bg-white/90 transition-colors shadow-md"
                         >
                           Book this pickup
@@ -460,7 +471,7 @@ export default function Home() {
                           </div>
                         </div>
                         <button
-                          onClick={() => tier.isQuoteOnly ? setQuoteModalOpen(true) : setLocation(`/book?tier=${tier.id}`)}
+                          onClick={() => tier.isQuoteOnly ? setQuoteModalOpen(true) : goToBook(tier.id)}
                           className="mt-6 w-full rounded-xl bg-primary text-primary-foreground font-bold py-3 text-sm hover:bg-primary/90 transition-colors"
                         >
                           {tier.isQuoteOnly ? "Request a quote" : "Book this pickup"}
@@ -587,7 +598,7 @@ export default function Home() {
                 <p className="text-lg opacity-90">
                   From newborn onesies to school bags, board games to baby bouncers. Every item that goes through Second Life Kids gets a proper sort. The best pieces go to resale or local redistribution. The rest is recycled. Very little reaches landfill, and that's exactly how we want it.
                 </p>
-                <Button variant="outline" className="bg-background hover:bg-background/90 text-foreground" onClick={() => setLocation("/book")}>
+                <Button variant="outline" className="bg-background hover:bg-background/90 text-foreground" onClick={() => goToBook()}>
                   Book my pickup now <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
@@ -762,7 +773,7 @@ export default function Home() {
               <Button
                 size="lg"
                 className="rounded-full text-base h-14 px-10 shadow-lg bg-white text-primary hover:bg-white/90 font-bold"
-                onClick={() => setLocation("/book")}
+                onClick={() => goToBook()}
               >
                 Book my pickup · from $45 <ArrowRight className="ml-2 h-5 w-5" aria-hidden="true" />
               </Button>
