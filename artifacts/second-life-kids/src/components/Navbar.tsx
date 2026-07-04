@@ -1,8 +1,19 @@
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 
+declare global {
+  interface Window { fbq?: Function; }
+}
+
 export default function Navbar() {
   const [location, setLocation] = useLocation();
+
+  const goToBook = () => {
+    if (typeof window.fbq === "function") {
+      window.fbq("track", "Lead");
+    }
+    setLocation("/book");
+  };
   const isHome = location === "/";
 
   return (
@@ -26,7 +37,7 @@ export default function Navbar() {
               Cancel booking
             </Button>
           )}
-          <Button size="sm" onClick={() => setLocation("/book")}>
+          <Button size="sm" onClick={goToBook}>
             Book a pickup
           </Button>
         </div>
