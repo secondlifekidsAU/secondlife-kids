@@ -13,12 +13,6 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://secondlifekids.zero2seventeen.com/kids-item-pickup-mornington-peninsula</loc>
-    <lastmod>2026-07-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
     <loc>https://secondlifekids.zero2seventeen.com/how-it-works</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>monthly</changefreq>
@@ -43,26 +37,62 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://secondlifekids.zero2seventeen.com/kids-item-pickup-mornington-peninsula</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://secondlifekids.zero2seventeen.com/blog</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://secondlifekids.zero2seventeen.com/blog/how-to-prepare-kids-items-for-collection</loc>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/what-to-do-with-outgrown-kids-clothes-mornington-peninsula</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://secondlifekids.zero2seventeen.com/blog/what-happens-to-donated-kids-clothing-australia</loc>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/how-to-declutter-kids-toys-without-stress</loc>
+    <lastmod>2026-07-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/kids-items-reuse-donate-recycle-guide</loc>
     <lastmod>2026-07-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://secondlifekids.zero2seventeen.com/blog/decluttering-kids-rooms-mornington-peninsula</loc>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/weekend-guide-decluttering-kids-stuff</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/kids-item-pickup-mornington-peninsula-how-it-works</loc>
+    <lastmod>2026-07-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/how-to-prepare-kids-items-for-collection</loc>
     <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/what-happens-to-donated-kids-clothing-australia</loc>
+    <lastmod>2026-07-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://secondlifekids.zero2seventeen.com/blog/decluttering-kids-rooms-mornington-peninsula</loc>
+    <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -70,7 +100,7 @@
     <loc>https://secondlifekids.zero2seventeen.com/faq</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://secondlifekids.zero2seventeen.com/terms</loc>

@@ -80,8 +80,17 @@ export default function BlogPage() {
                   key={post.slug}
                   className="group flex flex-col bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-md transition-all overflow-hidden"
                 >
-                  {/* Accent bar */}
-                  <div className="h-1.5 w-full bg-gradient-to-r from-primary/60 to-primary" aria-hidden="true" />
+                  {/* Hero image or accent bar */}
+                  {post.imageUrl ? (
+                    <img
+                      src={post.imageUrl}
+                      alt={post.imageAlt ?? post.title}
+                      className="w-full h-44 object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="h-1.5 w-full bg-gradient-to-r from-primary/60 to-primary" aria-hidden="true" />
+                  )}
 
                   <div className="p-6 flex flex-col flex-1 gap-4">
                     {/* Category + read time */}

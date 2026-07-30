@@ -10,6 +10,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Preparation Tips": "bg-green-50 text-green-700 border-green-200",
   "About the Service": "bg-blue-50 text-blue-700 border-blue-200",
   "Local Guides": "bg-amber-50 text-amber-700 border-amber-200",
+  "Decluttering Tips": "bg-purple-50 text-purple-700 border-purple-200",
 };
 
 function formatDate(iso: string) {
@@ -139,6 +140,17 @@ export default function BlogPostPage() {
             <p className="text-lg text-muted-foreground leading-relaxed">{post.excerpt}</p>
           </div>
         </section>
+
+        {/* Hero image */}
+        {post.imageUrl && (
+          <div className="w-full max-h-80 overflow-hidden">
+            <img
+              src={post.imageUrl}
+              alt={post.imageAlt ?? post.title}
+              className="w-full h-80 object-cover"
+            />
+          </div>
+        )}
 
         {/* Article body */}
         <article className="py-12 px-4">
