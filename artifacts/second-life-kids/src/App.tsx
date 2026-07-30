@@ -17,6 +17,8 @@ import WhatWeCollect from "@/pages/what-we-collect";
 import ServiceAreas from "@/pages/service-areas";
 import WhatHappensToItems from "@/pages/what-happens-to-items";
 import KidsItemPickupMorningtonPeninsula from "@/pages/kids-item-pickup-mornington-peninsula";
+import BlogPage from "@/pages/blog";
+import BlogPostPage from "@/pages/blog-post";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +38,8 @@ function Router() {
       <Route path="/service-areas" component={ServiceAreas} />
       <Route path="/what-happens-to-your-items" component={WhatHappensToItems} />
       <Route path="/kids-item-pickup-mornington-peninsula" component={KidsItemPickupMorningtonPeninsula} />
+      <Route path="/blog" component={BlogPage} />
+      <Route path="/blog/:slug" component={BlogPostPage} />
       <Route component={NotFound} />
     </Switch>
   );

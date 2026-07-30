@@ -121,6 +121,7 @@ export default function Home() {
             <a href="#what-we-take" className="text-foreground/80 hover:text-foreground transition-colors">What we take</a>
             <a href="#pickup-schedule" className="text-foreground/80 hover:text-foreground transition-colors">Pickup schedule</a>
             <a href="#faq" className="text-foreground/80 hover:text-foreground transition-colors">FAQ</a>
+            <a href="/blog" className="text-foreground/80 hover:text-foreground transition-colors">Blog</a>
           </nav>
           <div className="flex items-center gap-2">
             <Button onClick={() => goToBook()} className="rounded-full shadow-sm hover:shadow-md transition-all">Book my pickup</Button>
@@ -141,6 +142,7 @@ export default function Home() {
               { href: "#what-we-take", label: "What we take" },
               { href: "#pickup-schedule", label: "Pickup schedule" },
               { href: "#faq", label: "FAQ" },
+              { href: "/blog", label: "Blog" },
             ].map(link => (
               <a
                 key={link.href}
@@ -843,6 +845,7 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm font-medium">
+            <a href="/blog" className="text-muted-foreground hover:text-foreground transition-colors">Blog</a>
             <a href="/how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
             <a href="/what-we-collect" className="text-muted-foreground hover:text-foreground transition-colors">What We Collect</a>
             <a href="/service-areas" className="text-muted-foreground hover:text-foreground transition-colors">Service Areas</a>

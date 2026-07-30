@@ -27,6 +27,7 @@ export default function Navbar() {
         </a>
 
         <div className="flex items-center gap-2">
+          <a href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:inline px-2 py-1">Blog</a>
           {!isHome && (
             <Button
               variant="ghost"
