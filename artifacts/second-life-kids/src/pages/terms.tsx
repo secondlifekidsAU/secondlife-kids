@@ -1,9 +1,24 @@
 import { useLocation } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSeo } from "@/hooks/use-seo";
 
 export default function Terms() {
   const [, setLocation] = useLocation();
+
+  useSeo({
+    title: "Terms and Conditions | Second Life Kids",
+    description: "Terms and conditions for the Second Life Kids kids item collection service. Covers bookings, payment, cancellations, refunds, and the items we accept.",
+    canonical: "https://secondlifekids.zero2seventeen.com/terms",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://secondlifekids.zero2seventeen.com/" },
+        { "@type": "ListItem", "position": 2, "name": "Terms and Conditions", "item": "https://secondlifekids.zero2seventeen.com/terms" }
+      ]
+    }
+  });
 
   return (
     <div className="flex flex-col min-h-screen bg-background font-sans">

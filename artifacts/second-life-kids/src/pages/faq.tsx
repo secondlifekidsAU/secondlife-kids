@@ -1,4 +1,5 @@
 import { useLocation } from "wouter";
+import { useSeo } from "@/hooks/use-seo";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 
@@ -85,6 +86,20 @@ const categories = [
 export default function FaqPage() {
   const [, setLocation] = useLocation();
 
+  useSeo({
+    title: "FAQ | Kids Item Pickup Service | Second Life Kids",
+    description: "Common questions about the Second Life Kids collection service. How it works, what we accept, service areas, cancellations and refunds — all answered.",
+    canonical: "https://secondlifekids.zero2seventeen.com/faq",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://secondlifekids.zero2seventeen.com/" },
+        { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://secondlifekids.zero2seventeen.com/faq" }
+      ]
+    }
+  });
+
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur">
@@ -96,10 +111,8 @@ export default function FaqPage() {
             <img src="/logo.png" alt="Second Life Kids" className="h-11 w-auto" />
           </button>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" onClick={() => setLocation("/cancel-request")} className="text-muted-foreground hover:text-foreground text-sm">
-              Cancel booking
-            </Button>
-            <Button size="sm" onClick={() => setLocation("/book")}>Book a pickup</Button>
+            <a href="/cancel-request" className="inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">Cancel booking</a>
+            <a href="/book" className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground text-sm font-medium h-9 px-3 hover:bg-primary/90 transition-colors">Book a pickup</a>
           </div>
         </div>
       </header>
@@ -147,15 +160,24 @@ export default function FaqPage() {
           <div className="container max-w-2xl mx-auto text-center space-y-5">
             <h2 className="text-2xl font-bold tracking-tight">Ready to clear the clutter?</h2>
             <p className="text-muted-foreground">Book online in under two minutes. No phone calls, no waiting.</p>
-            <Button size="lg" onClick={() => setLocation("/book")} className="px-8">
+            <a href="/book" className="inline-flex items-center justify-center rounded-md bg-primary text-primary-foreground font-medium text-base h-11 px-8 hover:bg-primary/90 transition-colors">
               Book a pickup · from $45
-            </Button>
+            </a>
           </div>
         </section>
       </main>
 
-      <footer className="py-8 px-4 border-t text-center text-sm text-muted-foreground">
-        <span>© {new Date().getFullYear()} Second Life Kids · Mornington Peninsula, Victoria, Australia</span>
+      <footer className="py-8 px-4 border-t">
+        <div className="container max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="text-sm text-muted-foreground">© {new Date().getFullYear()} Second Life Kids · Mornington Peninsula, Victoria, Australia</span>
+          <nav className="flex flex-wrap justify-center gap-5 text-sm text-muted-foreground">
+            <a href="/" className="hover:text-foreground transition-colors">Home</a>
+            <a href="/how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
+            <a href="/what-we-collect" className="hover:text-foreground transition-colors">What We Collect</a>
+            <a href="/service-areas" className="hover:text-foreground transition-colors">Service Areas</a>
+            <a href="/terms" className="hover:text-foreground transition-colors">Terms</a>
+          </nav>
+        </div>
       </footer>
     </div>
   );

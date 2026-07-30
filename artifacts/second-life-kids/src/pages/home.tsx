@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 declare global {
   interface Window { fbq?: Function; }
 }
+import { useSeo } from "@/hooks/use-seo";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { ArrowRight, Check, Info, Loader2, MapPin, Star, Menu, X } from "lucide-react";
@@ -59,6 +60,12 @@ const SERVICED_SUBURBS = [
 ];
 
 export default function Home() {
+  useSeo({
+    title: "Kids Item Pickup Mornington Peninsula | Second Life Kids",
+    description: "Clear outgrown kids' clothes, toys and baby equipment without the stress. Second Life Kids collects children's items across the Mornington Peninsula for resale, reuse, donation and recycling.",
+    canonical: "https://secondlifekids.zero2seventeen.com/",
+  });
+
   const [, setLocation] = useLocation();
 
   const goToBook = (tier?: string) => {
@@ -178,8 +185,12 @@ export default function Home() {
               </div>
 
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white text-balance drop-shadow-lg">
-                You've walked past those bags a hundred times. Today they go.
+                Kids' Item Pickup Across the Mornington Peninsula
               </h1>
+
+              <p className="text-2xl md:text-3xl font-semibold text-white/90 drop-shadow text-balance">
+                You've walked past those bags a hundred times. Today they go.
+              </p>
 
               <p className="text-xl text-white/85 max-w-2xl mx-auto leading-relaxed drop-shadow">
                 That spare room is two minutes away from being yours again. Book online, pack what they've outgrown, and leave the bags outside. We collect every item, sort it by hand, and make sure nothing ends up in landfill.
@@ -832,6 +843,10 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-6 text-sm font-medium">
+            <a href="/how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How It Works</a>
+            <a href="/what-we-collect" className="text-muted-foreground hover:text-foreground transition-colors">What We Collect</a>
+            <a href="/service-areas" className="text-muted-foreground hover:text-foreground transition-colors">Service Areas</a>
+            <a href="/what-happens-to-your-items" className="text-muted-foreground hover:text-foreground transition-colors">What Happens to Items</a>
             <a href="/faq" className="text-muted-foreground hover:text-foreground transition-colors">FAQ</a>
             <a href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms and Conditions</a>
             <a href="mailto:secondlifekids@zero2seventeen.com" className="text-muted-foreground hover:text-foreground transition-colors">secondlifekids@zero2seventeen.com</a>

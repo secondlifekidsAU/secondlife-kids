@@ -1,0 +1,84 @@
+The Second Life Kids sitemap and Google indexing are now working correctly.
+
+Google Search Console confirms:
+
+The sitemap is processed successfully
+Four pages are discovered
+The homepage is already indexed
+HTTPS is working correctly
+
+The issue is now SEO and local rankings, not indexing.
+
+Critical restriction
+
+Do not modify, replace, refactor or reconnect anything related to:
+
+Stripe
+The payment gateway
+Checkout or payment processing
+Payment webhooks
+Environment variables or secret keys
+The Render deployment
+Render services
+The booking and payment workflow
+Database payment records
+Payment confirmation pages
+Existing API routes connected to booking or payment
+
+The payment system is already configured through Stripe and deployed on Render. It must remain completely untouched.
+
+Do not change dependencies, server configuration, deployment settings or backend code unless the change is strictly required for the SEO work and has been approved first.
+
+The SEO work must be limited to public-facing content, metadata, schema, crawlability, internal links and sitemap updates.
+
+Please complete the following:
+
+Optimise the homepage SEO title to:
+
+Kids Item Pickup Mornington Peninsula | Second Life Kids
+
+Add this meta description:
+
+Clear outgrown kids’ clothes, toys and baby equipment without the stress. Second Life Kids collects children’s items across the Mornington Peninsula for resale, reuse, donation and recycling.
+
+Ensure the homepage has one clear H1:
+
+Kids’ Item Pickup Across the Mornington Peninsula
+
+Improve the homepage copy to explain:
+What Second Life Kids collects
+How the pickup service works
+Who the service is for
+Current service areas
+What happens to collected items
+The minimum pickup fee
+Add appropriate structured data:
+LocalBusiness or Service schema
+FAQ schema only for visible FAQs
+Breadcrumb schema on internal pages
+Confirm every public page has:
+A unique title tag
+A unique meta description
+A self-referencing canonical URL
+One clear H1
+Crawlable internal links
+Descriptive image alt text
+Create SEO landing pages for:
+How It Works
+What We Collect
+Service Areas
+What Happens to Your Items
+Kids Item Pickup Mornington Peninsula
+Add all new public pages automatically to:
+
+https://secondlifekids.zero2seventeen.com/sitemap.xml
+
+Do not create duplicate, thin or automatically generated suburb pages.
+Preserve the existing design, URLs, sitemap, robots.txt, booking system, Stripe payment system and Render deployment.
+
+Before making changes, create a backup or commit. After completing the work, provide:
+
+A list of files changed
+Every SEO change made
+Every new URL created
+Confirmation that no Stripe, booking, backend, database, environment-variable or Render configuration files were modified
