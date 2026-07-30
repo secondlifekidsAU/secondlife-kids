@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /success
+Disallow: /cancel
+Disallow: /cancel-request
+
+Sitemap: https://secondlifekids.zero2seventeen.com/sitemap.xml
